@@ -6,6 +6,7 @@ module SoundCloud
     USER_AGENT            = "SoundCloud Ruby Wrapper #{SoundCloud::VERSION}"
     CLIENT_ID_PARAM_NAME  = :client_id
     API_SUBHOST           = 'api'
+    API_SUBHOST_V2        = 'api-v2'
     AUTHORIZE_PATH        = '/connect'
     TOKEN_PATH            = '/oauth2/token'
     DEFAULT_OPTIONS       = {
@@ -92,8 +93,11 @@ module SoundCloud
     end
     alias host site
 
-    def api_host
-      [API_SUBHOST, host].join('.')
+    def api_host(use_api_v2=false)
+      [
+        use_api_v2 ? API_SUBHOST_V2 : API_SUBHOST,
+        host
+      ].join('.')
     end
 
     def authorize_url(options={})
@@ -191,8 +195,9 @@ module SoundCloud
       else
         options[body_or_query][CLIENT_ID_PARAM_NAME] = client_id
       end
+      use_api_v2 = options[body_or_query][:use_api_v2]
       [
-        "#{scheme}://#{api_host}#{path}#{uri.query ? "?#{uri.query}" : ""}",
+        "#{scheme}://#{api_host(use_api_v2)}#{path}#{uri.query ? "?#{uri.query}" : ""}",
         options
       ]
     end
