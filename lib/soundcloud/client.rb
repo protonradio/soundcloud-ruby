@@ -202,7 +202,6 @@ module SoundCloud
       options[body_or_query] ||= {}
       options[body_or_query][:format] = 'json'
       if access_token
-        options[body_or_query][:oauth_token] = access_token
         options[:headers] = { 'Authorization' => "OAuth #{access_token}" }
       else
         options[body_or_query][CLIENT_ID_PARAM_NAME] = client_id
