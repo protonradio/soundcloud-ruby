@@ -298,7 +298,7 @@ describe SoundCloud do
     [:get, :head, :delete].each do |method|
       describe "##{method}" do
         it "passes the oauth_token parameter when doing a request" do
-          expect(SoundCloud::Client).to receive(method).with('https://api.soundcloud.com/tracks', {:query => {:format => "json", :oauth_token => 'ac'}})
+          expect(SoundCloud::Client).to receive(method).with('https://api.soundcloud.com/tracks', {:query => {:format => "json", :oauth_token => 'ac'}, :headers => { 'Authorization' => 'OAuth ac' }})
           subject.send(method, '/tracks')
         end
         it "tries to refresh the token if it is expired and retry" do
