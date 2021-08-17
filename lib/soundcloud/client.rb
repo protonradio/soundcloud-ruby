@@ -11,7 +11,8 @@ module SoundCloud
     TOKEN_PATH            = '/oauth2/token'
     DEFAULT_OPTIONS       = {
       :site              => 'soundcloud.com',
-      :on_exchange_token => lambda {}
+      :on_exchange_token => lambda {},
+      :use_ssl? => true
     }
 
     attr_accessor :options
