@@ -20,7 +20,11 @@ module SoundCloud
 
     def initialize(options={})
       store_options(options)
-      if access_token.nil? && (options_for_refresh_flow_present? || options_for_credentials_flow_present? || options_for_code_flow_present?)
+      if access_token.nil? && (
+        options_for_refresh_flow_present? ||
+        options_for_code_flow_present? ||
+        options_for_client_credentials_flow_present?
+      )
         exchange_token
       end
       raise ArgumentError, "At least a client_id or an access_token must be present" if client_id.nil? && access_token.nil?
@@ -119,17 +123,17 @@ module SoundCloud
           :grant_type => 'refresh_token',
           :refresh_token => refresh_token,
         }
-      elsif options_for_credentials_flow_present?
-        {
-          :grant_type => 'password',
-          :username => @options[:username],
-          :password => @options[:password],
-        }
       elsif options_for_code_flow_present?
         {
           :grant_type => 'authorization_code',
           :redirect_uri => @options[:redirect_uri],
           :code => @options[:code],
+        }
+      elsif options_for_client_credentials_flow_present?
+        {
+          client_id: client_id,
+          client_secret: client_secret,
+          grant_type: 'client_credentials'
         }
       end
       params.merge!(client_params)
@@ -171,12 +175,12 @@ module SoundCloud
       !!@options[:refresh_token]
     end
 
-    def options_for_credentials_flow_present?
-      !!(@options[:username] && @options[:password])
-    end
-
     def options_for_code_flow_present?
       !!(@options[:code] && @options[:redirect_uri])
+    end
+
+    def options_for_client_credentials_flow_present?
+      !!(client_id && client_secret)
     end
 
     def store_options(options={})
