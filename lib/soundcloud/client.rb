@@ -22,8 +22,8 @@ module SoundCloud
     def initialize(options = {})
       store_options(options)
       if access_token.nil? && (
-        options_for_refresh_flow_present? ||
         options_for_code_flow_present? ||
+        options_for_refresh_flow_present? ||
         options_for_client_credentials_flow_present?
       )
         exchange_token
@@ -124,16 +124,16 @@ module SoundCloud
       end
 
       client_params = { client_id: client_id, client_secret: client_secret }
-      params = if options_for_refresh_flow_present?
-                 {
-                   grant_type: 'refresh_token',
-                   refresh_token: refresh_token
-                 }
-               elsif options_for_code_flow_present?
+      params = if options_for_code_flow_present?
                  {
                    grant_type: 'authorization_code',
                    redirect_uri: @options[:redirect_uri],
                    code: @options[:code]
+                 }
+               elsif options_for_refresh_flow_present?
+                 {
+                   grant_type: 'refresh_token',
+                   refresh_token: refresh_token
                  }
                elsif options_for_client_credentials_flow_present?
                  {
